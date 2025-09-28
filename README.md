@@ -10,7 +10,7 @@ Sistema completo de chat bot para captura de leads em landing pages com aparênc
 ## ✨ Principais Recursos
 
 - **🎨 Interface WhatsApp**: Design idêntico ao WhatsApp com animações suaves
-- **⚙️ 100% Configurável**: Personalize mensagens, cores e fluxo via JSON
+- **⚙️ 100% Configurável**: Personalize mensagens, cores e fluxo via JSON ou variáveis de ambiente
 - **📧 Envio Automático**: Leads enviados automaticamente por e-mail
 - **📱 Totalmente Responsivo**: Funciona em desktop, tablet e mobile
 - **🚀 Fácil Integração**: Apenas 2 linhas de código para implementar
@@ -18,35 +18,37 @@ Sistema completo de chat bot para captura de leads em landing pages com aparênc
 
 ## 📋 Demonstração
 
-Veja o sistema funcionando: [Demo Online](demo.html)
+Veja o sistema funcionando: [Demo Online](http://localhost:8080/)
 
 ## 🛠️ Tecnologias Utilizadas
 
 - **Backend**: Node.js, Express, Socket.IO
 - **Frontend**: HTML5, CSS3, JavaScript puro
 - **E-mail**: Nodemailer
-- **Outras**: CORS, Docker (opcional)
+- **Outras**: CORS, Docker (opcional), dotenv
 
 ## 📦 Estrutura do Projeto
 
 ```
 whatsapp-chatbot/
+├── .env                   # Arquivo de variáveis de ambiente (NÃO versionar)
+├── .env.example           # Exemplo de variáveis de ambiente
 ├── app.js                 # Servidor Node.js principal
 ├── config.json           # Configurações do sistema
 ├── package.json          # Dependências do projeto
 ├── Dockerfile            # Configuração Docker
-├── docker-compose.yml    # Orquestração Docker
+├── docker-compose.yml     # Orquestração Docker
 ├── public/
-│   └── widget.js         # Widget frontend
-├── logs/                 # Logs da aplicação
-└── README.md            # Documentação
+│   └── widget.js          # Widget frontend
+├── logs/                  # Logs da aplicação
+└── README.md              # Documentação
 ```
 
 ## ⚡ Instalação Rápida
 
 ### 1. **Clone ou baixe os arquivos**
 ```bash
-mkdir whatsapp-chatbot
+git clone <URL_DO_REPOSITORIO>
 cd whatsapp-chatbot
 ```
 
@@ -55,8 +57,17 @@ cd whatsapp-chatbot
 npm install
 ```
 
-### 3. **Configure o sistema**
-Edite o `config.json` com suas informações:
+### 3. **Configure as variáveis de ambiente**
+Copie o arquivo de exemplo `.env.example` para um novo arquivo chamado `.env`. Este arquivo **não deve** ser versionado.
+
+```bash
+cp .env.example .env
+```
+
+Abra o arquivo `.env` e preencha com suas informações. As variáveis de ambiente neste arquivo têm **prioridade** sobre o `config.json`.
+
+### 4. **Configure o sistema (Opcional)**
+Se preferir, edite o `config.json` com suas informações. Lembre-se que as variáveis no `.env` irão sobrescrever os valores do `config.json`.
 
 ```json
 {
@@ -72,12 +83,12 @@ Edite o `config.json` com suas informações:
 }
 ```
 
-### 4. **Execute o servidor**
+### 5. **Execute o servidor**
 ```bash
 npm start
 ```
 
-### 5. **Integre no seu site**
+### 6. **Integre no seu site**
 Adicione antes do `</body>`:
 
 ```html
@@ -87,54 +98,50 @@ Adicione antes do `</body>`:
 
 ## ⚙️ Configuração Detalhada
 
-### 📧 Configuração SMTP
+O sistema utiliza uma hierarquia de configuração para flexibilidade:
+1.  **Variáveis de Ambiente (`.env`)**: Têm a maior prioridade. Ideal para produção e para manter dados sensíveis seguros.
+2.  **Arquivo `config.json`**: Configurações padrão. Útil para desenvolvimento e para definir a estrutura base.
 
-#### Gmail
-1. Ative a verificação em 2 etapas
-2. Gere uma senha de app
-3. Use no `config.json`:
+### 📧 Configuração SMTP com `.env`
 
-```json
-{
-  "smtp": {
-    "host": "smtp.gmail.com",
-    "port": 587,
-    "user": "seuemail@gmail.com",
-    "password": "senha-app-gerada"
-  }
-}
+Edite o arquivo `.env` para configurar o envio de e-mails:
+
+```
+# Configurações SMTP
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=seuemail@gmail.com
+SMTP_PASS=sua-senha-de-app
+ADMIN_EMAIL=email-para-receber-leads@suaempresa.com
 ```
 
-#### Outros Provedores
-- **Outlook**: `smtp.live.com`, porta 587
-- **Yahoo**: `smtp.mail.yahoo.com`, porta 587
-- **SendGrid**: `smtp.sendgrid.net`, porta 587
+#### Gmail
+1. Ative a verificação em 2 etapas na sua conta Google.
+2. Gere uma "Senha de app".
+3. Use o e-mail e a senha de app gerada nas variáveis `SMTP_USER` and `SMTP_PASS`.
 
-### 🎨 Personalização Visual
+### 🎨 Personalização Visual com `.env`
 
-```json
-{
-  "company": {
-    "name": "Sua Empresa",
-    "logo": "https://seusite.com/logo.png"
-  },
-  "chat": {
-    "title": "Atendimento Online",
-    "subtitle": "Resposta rápida",
-    "placeholder": "Digite sua mensagem...",
-    "colors": {
-      "primary": "#25D366",
-      "secondary": "#128C7E",
-      "text": "#FFFFFF",
-      "background": "#F0F0F0"
-    }
-  }
-}
+```
+# Configurações da Empresa
+COMPANY_NAME="Sua Empresa"
+COMPANY_LOGO=https://seusite.com/logo.png
+
+# Configurações do Chat
+CHAT_TITLE="Atendimento Online"
+CHAT_SUBTITLE="Resposta rápida"
+CHAT_PLACEHOLDER="Digite sua mensagem..."
+
+# Cores do Chat
+CHAT_COLOR_PRIMARY=#25D366
+CHAT_COLOR_SECONDARY=#128C7E
+CHAT_COLOR_TEXT=#FFFFFF
+CHAT_COLOR_BACKGROUND=#F0F0F0
 ```
 
 ### 💬 Configuração do Fluxo
 
-Defina o fluxo de conversa editando `conversation.steps` no `config.json`:
+O fluxo da conversa é definido no arquivo `config.json`, na seção `conversation.steps`.
 
 ```json
 {
@@ -201,9 +208,9 @@ Defina o fluxo de conversa editando `conversation.steps` no `config.json`:
 git clone seu-repositorio
 cd whatsapp-chatbot
 
-# Configurar
-cp config.json.example config.json
-# Editar config.json com suas informações
+# Configurar .env
+cp .env.example .env
+# Edite o .env com suas informações
 
 # Executar
 docker-compose up -d
@@ -219,9 +226,19 @@ docker build -t whatsapp-chatbot .
 docker run -d \
   --name chatbot-widget \
   -p 3000:3000 \
-  -v $(pwd)/config.json:/app/config.json:ro \
+  --env-file .env \
   whatsapp-chatbot
 ```
+
+## 🌐 Endpoints Úteis
+
+O `app.js` fornece algumas rotas para facilitar o desenvolvimento e o monitoramento:
+
+- **`GET /health`**: Verifica a saúde do servidor. Retorna `{"status":"OK", ...}` se tudo estiver funcionando.
+- **`POST /test-email`**: Testa a configuração SMTP. Envia um e-mail de teste para o `ADMIN_EMAIL`.
+- **`GET /debug-config`**: Mostra as configurações finais carregadas (combinando `.env` e `config.json`), útil para debug.
+- **`GET /admin`**: Exibe o painel de administração (`admin-panel.html`).
+- **`GET /test`**: Página de teste do widget.
 
 ## 🌐 Deploy em Produção
 
@@ -487,7 +504,7 @@ for (let i = 0; i < numConnections; i++) {
 
 ### **E-mails não enviados**
 
-1. Verificar credenciais SMTP no `config.json`
+1. Verificar credenciais SMTP no `config.json` ou `.env`
 2. Testar endpoint: `curl -X POST http://localhost:3000/test-email`
 3. Verificar logs do servidor
 4. Confirmar configurações do provedor de e-mail
@@ -591,7 +608,7 @@ Contribuições são bem-vindas! Por favor:
 
 ## 📝 Licença
 
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para detalhes.
+Este projeto está sob a licença MIT.
 
 ## ⭐ Créditos
 
