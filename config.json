@@ -1,0 +1,98 @@
+{
+  "company": {
+    "name": "Minha Empresa",
+    "logo": "https://via.placeholder.com/40x40/25D366/FFFFFF?text=ME"
+  },
+  "smtp": {
+    "host": "smtp.gmail.com",
+    "port": 587,
+    "user": "seuemail@gmail.com",
+    "password": "suasenhaapp"
+  },
+  "admin": {
+    "email": "admin@minhaempresa.com"
+  },
+  "chat": {
+    "title": "Atendimento Online",
+    "subtitle": "Resposta rápida",
+    "placeholder": "Digite sua mensagem...",
+    "colors": {
+      "primary": "#25D366",
+      "secondary": "#128C7E",
+      "text": "#FFFFFF",
+      "background": "#F0F0F0"
+    }
+  },
+  "conversation": {
+    "steps": [
+      {
+        "type": "message",
+        "text": "Olá! 👋 Bem-vindo à Minha Empresa! Como posso te ajudar hoje?"
+      },
+      {
+        "type": "options",
+        "text": "Escolha uma das opções abaixo:",
+        "options": [
+          {
+            "text": "Quero saber sobre produtos",
+            "value": "produtos"
+          },
+          {
+            "text": "Preciso de suporte",
+            "value": "suporte"
+          },
+          {
+            "text": "Quero fazer um orçamento",
+            "value": "orcamento"
+          }
+        ],
+        "save_as": "interesse"
+      },
+      {
+        "type": "message",
+        "text": "Perfeito! Para te ajudar melhor, vou precisar de algumas informações."
+      },
+      {
+        "type": "input",
+        "text": "Qual é o seu nome?",
+        "input_type": "name"
+      },
+      {
+        "type": "input",
+        "text": "Qual é o seu telefone? (com DDD)",
+        "input_type": "phone"
+      },
+      {
+        "type": "input",
+        "text": "Qual é o seu e-mail?",
+        "input_type": "email"
+      },
+      {
+        "type": "options",
+        "text": "Qual é o melhor horário para entrarmos em contato?",
+        "options": [
+          {
+            "text": "Manhã (8h às 12h)",
+            "value": "manha"
+          },
+          {
+            "text": "Tarde (13h às 18h)",
+            "value": "tarde"
+          },
+          {
+            "text": "Noite (19h às 21h)",
+            "value": "noite"
+          }
+        ],
+        "save_as": "horario_contato"
+      },
+      {
+        "type": "input",
+        "text": "Tem alguma observação ou pergunta específica?",
+        "input_type": "text",
+        "save_as": "observacoes"
+      }
+    ],
+    "closing_message": "Obrigado pelas informações! Nossa equipe entrará em contato em breve. Tenha um ótimo dia! 😊"
+  }
+}
