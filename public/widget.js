@@ -293,6 +293,36 @@
   style.textContent = widgetCSS;
   document.head.appendChild(style);
   
+  // Variáveis para configuração
+  let chatConfig = {
+    company: { name: 'Empresa', logo: '' },
+    chat: { 
+      title: 'Atendimento Online', 
+      subtitle: 'Resposta rápida', 
+      placeholder: 'Digite sua mensagem...',
+      colors: {
+        primary: '#25D366',
+        secondary: '#128C7E',
+        text: '#FFFFFF',
+        background: '#F0F0F0'
+      }
+    }
+  };
+
+  // Função para carregar configurações
+  async function loadChatConfig() {
+    try {
+      const response = await fetch(WIDGET_CONFIG.serverUrl + '/chat-config');
+      if (response.ok) {
+        chatConfig = await response.json();
+        console.log('✅ Configurações carregadas:', chatConfig);
+        updateWidgetWithConfig();
+      }
+    } catch (error) {
+      console.warn('⚠️ Erro ao carregar configurações, usando padrões:', error);
+    }
+  }
+
   // HTML do widget
   const widgetHTML = `
     <div id="whatsapp-widget">
@@ -305,10 +335,13 @@
       <div id="whatsapp-chat-window">
         <div class="chat-header">
           <div class="chat-header-info">
-            <div class="chat-header-avatar">ME</div>
+            <div class="chat-header-avatar" id="chat-avatar">
+              <img id="company-logo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: none;" />
+              <span id="company-initials">LOGO</span>
+            </div>
             <div class="chat-header-text">
-              <h3>Atendimento Online</h3>
-              <p>Resposta rápida</p>
+              <h3 id="chat-title">Atendimento Online</h3>
+              <p id="chat-subtitle">Resposta rápida</p>
             </div>
           </div>
           <button class="chat-close" type="button">&times;</button>
@@ -342,12 +375,115 @@
   const chatSendBtn = document.getElementById('chat-send-btn');
   const chatClose = document.querySelector('.chat-close');
   const connectionStatus = document.getElementById('connection-status');
+
+  // Carregar configurações ao inicializar
+  loadChatConfig();
   
   // Variáveis de estado
   let isOpen = false;
   let socket = null;
   let isConnected = false;
   let messageId = 0;
+
+  // Função para atualizar widget com configurações
+  function updateWidgetWithConfig() {
+    // Atualizar cores CSS
+    updateWidgetColors();
+    
+    // Atualizar textos do header
+    const chatTitle = document.getElementById('chat-title');
+    const chatSubtitle = document.getElementById('chat-subtitle');
+    const chatInput = document.getElementById('chat-input');
+    
+    if (chatTitle) chatTitle.textContent = chatConfig.chat.title;
+    if (chatSubtitle) chatSubtitle.textContent = chatConfig.chat.subtitle;
+    if (chatInput) chatInput.placeholder = chatConfig.chat.placeholder;
+    
+    // Atualizar logo/avatar
+    updateCompanyLogo();
+  }
+
+  // Função para atualizar cores do widget
+  function updateWidgetColors() {
+    const style = document.createElement('style');
+    style.id = 'widget-dynamic-colors';
+    
+    // Remover estilo anterior se existir
+    const existingStyle = document.getElementById('widget-dynamic-colors');
+    if (existingStyle) existingStyle.remove();
+    
+    style.textContent = `
+      #whatsapp-chat-button {
+        background: ${chatConfig.chat.colors.primary} !important;
+      }
+      #whatsapp-chat-button:hover {
+        background: ${chatConfig.chat.colors.secondary} !important;
+      }
+      .chat-header {
+        background: ${chatConfig.chat.colors.primary} !important;
+      }
+      .chat-header-avatar {
+        background: ${chatConfig.chat.colors.secondary} !important;
+      }
+      .chat-input:focus {
+        border-color: ${chatConfig.chat.colors.primary} !important;
+      }
+      .chat-send-btn {
+        background: ${chatConfig.chat.colors.primary} !important;
+      }
+      .chat-send-btn:hover {
+        background: ${chatConfig.chat.colors.secondary} !important;
+      }
+      .option-button {
+        border-color: ${chatConfig.chat.colors.primary} !important;
+        color: ${chatConfig.chat.colors.primary} !important;
+      }
+      .option-button:hover {
+        background: ${chatConfig.chat.colors.primary} !important;
+        color: ${chatConfig.chat.colors.text} !important;
+      }
+      .connection-status {
+        color: ${chatConfig.chat.colors.primary} !important;
+      }
+    `;
+    
+    document.head.appendChild(style);
+  }
+
+  // Função para atualizar logo da empresa
+  function updateCompanyLogo() {
+    const companyLogo = document.getElementById('company-logo');
+    const companyInitials = document.getElementById('company-initials');
+    
+    if (chatConfig.company.logo && chatConfig.company.logo.trim()) {
+      // Usar logo se disponível
+      companyLogo.src = chatConfig.company.logo;
+      companyLogo.style.display = 'block';
+      companyInitials.style.display = 'none';
+      
+      // Fallback para iniciais se logo falhar
+      companyLogo.onerror = function() {
+        companyLogo.style.display = 'none';
+        companyInitials.style.display = 'block';
+        companyInitials.textContent = getCompanyInitials();
+      };
+    } else {
+      // Usar iniciais se não houver logo
+      companyLogo.style.display = 'none';
+      companyInitials.style.display = 'block';
+      companyInitials.textContent = getCompanyInitials();
+    }
+  }
+
+  // Função para obter iniciais da empresa
+  function getCompanyInitials() {
+    const name = chatConfig.company.name || 'Empresa';
+    return name
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase())
+      .slice(0, 2)
+      .join('');
+  }
   
   // Conectar ao servidor Socket.IO
   function connectSocket() {

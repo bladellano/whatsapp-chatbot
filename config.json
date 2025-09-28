@@ -1,16 +1,16 @@
 {
   "company": {
-    "name": "Minha Empresa",
-    "logo": "https://via.placeholder.com/40x40/25D366/FFFFFF?text=ME"
+    "name": "Minha Empresa Ltda",
+    "logo": "https://i.pravatar.cc/300"
   },
   "smtp": {
     "host": "smtp.gmail.com",
-    "port": 587,
-    "user": "seuemail@gmail.com",
-    "password": "suasenhaapp"
+    "port": 465,
+    "user": "user@gmail.com",
+    "password": "******"
   },
   "admin": {
-    "email": "admin@minhaempresa.com"
+    "email": "administrator@gmail.com"
   },
   "chat": {
     "title": "Atendimento Online",
@@ -27,7 +27,7 @@
     "steps": [
       {
         "type": "message",
-        "text": "Olá! 👋 Bem-vindo à Minha Empresa! Como posso te ajudar hoje?"
+        "text": "Olá! 👋 Seja bem-vindo(a)! Estou aqui para ajudá-lo(a) com o que precisar. Como posso te auxiliar?"
       },
       {
         "type": "options",

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Testes - WhatsApp Chatbot</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #25D366;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .test-section h3 {
+            color: #333;
+            margin-top: 0;
+        }
+        button {
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #128C7E;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #e2e3e5;
+            color: #383d41;
+            border: 1px solid #d6d8db;
+        }
+        .widget-demo {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #25D366;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+        }
+        .widget-demo:hover {
+            background: #128C7E;
+            transform: scale(1.05);
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-online { background: #28a745; }
+        .status-offline { background: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Painel de Testes - WhatsApp Chatbot</h1>
+        
+        <div class="test-section">
+            <h3>📊 Status do Sistema</h3>
+            <p><span class="status-indicator status-online"></span>Sistema Online</p>
+            <button onclick="checkHealth()">Verificar Health Check</button>
+            <div id="health-result" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📧 Teste de Configuração SMTP</h3>
+            <p>Testa se a configuração do servidor de email está correta.</p>
+            <button onclick="testSMTP()">Testar Configuração SMTP</button>
+            <div id="smtp-result" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>✉️ Teste de Envio de Email Completo</h3>
+            <p>Envia um email de teste com dados de exemplo para o administrador.</p>
+            <button onclick="testLeadEmail()">Enviar Email de Teste</button>
+            <div id="email-result" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>💬 Widget de Chat</h3>
+            <p>O widget de chat está funcionando no canto inferior direito da página.</p>
+            <p>Teste a conversa completa clicando no botão verde.</p>
+        </div>
+
+        <div class="test-section">
+            <h3>📝 Informações de Configuração</h3>
+            <p><strong>Email do Administrador:</strong> <span id="admin-email">bladellano@gmail.com</span></p>
+            <p><strong>Empresa:</strong> Minha Empresa</p>
+            <p><strong>Servidor SMTP:</strong> smtp.gmail.com</p>
+        </div>
+    </div>
+
+    <!-- Widget de Chat -->
+    <script src="/widget.js"></script>
+
+    <script>
+        async function checkHealth() {
+            const button = event.target;
+            const result = document.getElementById('health-result');
+            
+            button.disabled = true;
+            button.textContent = 'Verificando...';
+            result.style.display = 'block';
+            result.className = 'result info';
+            result.textContent = 'Verificando status do sistema...';
+
+            try {
+                const response = await fetch('/health');
+                const data = await response.json();
+                
+                result.className = 'result success';
+                result.textContent = `✅ Sistema Online\nTimestamp: ${data.timestamp}`;
+            } catch (error) {
+                result.className = 'result error';
+                result.textContent = `❌ Erro: ${error.message}`;
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Verificar Health Check';
+            }
+        }
+
+        async function testSMTP() {
+            const button = event.target;
+            const result = document.getElementById('smtp-result');
+            
+            button.disabled = true;
+            button.textContent = 'Testando...';
+            result.style.display = 'block';
+            result.className = 'result info';
+            result.textContent = 'Testando configuração SMTP...';
+
+            try {
+                const response = await fetch('/test-email', { method: 'POST' });
+                const data = await response.json();
+                
+                if (data.success) {
+                    result.className = 'result success';
+                    result.textContent = `✅ ${data.message}`;
+                } else {
+                    result.className = 'result error';
+                    result.textContent = `❌ ${data.message}`;
+                }
+            } catch (error) {
+                result.className = 'result error';
+                result.textContent = `❌ Erro: ${error.message}`;
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Testar Configuração SMTP';
+            }
+        }
+
+        async function testLeadEmail() {
+            const button = event.target;
+            const result = document.getElementById('email-result');
+            
+            button.disabled = true;
+            button.textContent = 'Enviando...';
+            result.style.display = 'block';
+            result.className = 'result info';
+            result.textContent = 'Enviando email de teste...';
+
+            try {
+                const response = await fetch('/test-lead-email', { method: 'POST' });
+                const data = await response.json();
+                
+                if (data.success) {
+                    result.className = 'result success';
+                    result.textContent = `✅ ${data.message}\n📧 Enviado para: ${data.sentTo}\n🆔 Message ID: ${data.messageId}`;
+                } else {
+                    result.className = 'result error';
+                    result.textContent = `❌ ${data.message}\nErro: ${data.error}`;
+                }
+            } catch (error) {
+                result.className = 'result error';
+                result.textContent = `❌ Erro: ${error.message}`;
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Enviar Email de Teste';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste Widget WhatsApp</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h1>Teste do Widget WhatsApp</h1>
+    <div id="debug"></div>
+    
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <script>
+        const debug = document.getElementById('debug');
+        
+        function log(message) {
+            debug.innerHTML += '<p>' + new Date().toLocaleTimeString() + ': ' + message + '</p>';
+            console.log(message);
+        }
+        
+        log('Iniciando teste...');
+        
+        const socket = io('http://localhost:3000');
+        
+        socket.on('connect', () => {
+            log('Conectado ao servidor Socket.IO');
+        });
+        
+        socket.on('bot-message', (message) => {
+            log('Mensagem do bot recebida: ' + JSON.stringify(message));
+        });
+        
+        socket.on('disconnect', () => {
+            log('Desconectado do servidor');
+        });
+        
+        socket.on('connect_error', (error) => {
+            log('Erro de conexão: ' + error);
+        });
+        
+        // Simular envio de mensagem após 3 segundos
+        setTimeout(() => {
+            log('Enviando mensagem de teste...');
+            socket.emit('user-message', { text: 'produtos' });
+        }, 3000);
+    </script>
+    
+    <!-- Incluir o widget também -->
+    <script src="http://localhost:3000/widget.js"></script>
+</body>
+</html>
