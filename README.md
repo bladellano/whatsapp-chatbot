@@ -238,7 +238,9 @@ O `app.js` fornece algumas rotas para facilitar o desenvolvimento e o monitorame
 - **`POST /test-email`**: Testa a configuração SMTP. Envia um e-mail de teste para o `ADMIN_EMAIL`.
 - **`GET /debug-config`**: Mostra as configurações finais carregadas (combinando `.env` e `config.json`), útil para debug.
 - **`GET /admin`**: Exibe o painel de administração (`admin-panel.html`).
+- **`GET /about`**: Exibe a página sobre (`about.html`).
 - **`GET /test`**: Página de teste do widget.
+
 
 ## 🌐 Deploy em Produção
 

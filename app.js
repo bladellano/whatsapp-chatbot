@@ -51,6 +51,12 @@ try {
   if (process.env.ADMIN_EMAIL) {
     config.admin.email = process.env.ADMIN_EMAIL;
   }
+  if (process.env.SMTP_FROM_EMAIL) {
+    config.smtp.from_email = process.env.SMTP_FROM_EMAIL;
+  }
+  if (process.env.SMTP_FROM_NAME) {
+    config.smtp.from_name = process.env.SMTP_FROM_NAME;
+  }
   if (process.env.CHAT_TITLE) {
     config.chat.title = process.env.CHAT_TITLE;
   }
@@ -123,8 +129,6 @@ class ChatSession {
 
 // Função para enviar e-mail
 async function sendLeadEmail(userData) {
-  console.log('Iniciando envio de email para lead:', userData);
-  
   // Formatar dados adicionais de forma mais legível
   const additionalData = Object.entries(userData)
     .filter(([key]) => !['name', 'phone', 'email'].includes(key))
@@ -212,7 +216,7 @@ async function sendLeadEmail(userData) {
   `;
 
   const mailOptions = {
-    from: `"${config.company.name} - Leads" <${config.smtp.user}>`,
+    from: `"${config.smtp.from_name || config.company.name + ' - Leads'}" <${config.smtp.from_email || config.smtp.user}>`,
     to: config.admin.email,
     subject: `🎯 Novo Lead: ${userData.name || 'Cliente Interessado'} - ${userData.interesse || 'Contato'}`,
     html: emailContent,
@@ -435,6 +439,11 @@ app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'admin-panel.html'));
 });
 
+// Rota para servir o sobre
+app.get('/about', (req, res) => {
+  res.sendFile(path.join(__dirname, 'about.html'));
+});
+
 // Rota para servir configurações do chat (para o widget)
 app.get('/chat-config', (req, res) => {
   res.json({
@@ -458,6 +467,8 @@ app.get('/debug-config', (req, res) => {
       COMPANY_NAME: process.env.COMPANY_NAME,
       COMPANY_LOGO: process.env.COMPANY_LOGO,
       SMTP_USER: process.env.SMTP_USER,
+      SMTP_FROM_EMAIL: process.env.SMTP_FROM_EMAIL,
+      SMTP_FROM_NAME: process.env.SMTP_FROM_NAME,
       ADMIN_EMAIL: process.env.ADMIN_EMAIL,
       CHAT_TITLE: process.env.CHAT_TITLE,
       CHAT_SUBTITLE: process.env.CHAT_SUBTITLE,
@@ -469,6 +480,8 @@ app.get('/debug-config', (req, res) => {
         host: config.smtp.host,
         port: config.smtp.port,
         user: config.smtp.user,
+        from_email: config.smtp.from_email,
+        from_name: config.smtp.from_name
         // password: '***HIDDEN***'
       },
       admin: config.admin,
