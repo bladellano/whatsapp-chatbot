@@ -3,7 +3,7 @@
   
   // Configuração do widget
   const WIDGET_CONFIG = {
-    serverUrl: 'http://localhost:3000', // Altere para sua URL de produção
+    serverUrl: 'https://cdns-systems-whatsapp-chatbot.ccuexx.easypanel.host', // Altere para sua URL de produção
     socketPath: '/socket.io/'
   };
   

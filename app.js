@@ -78,6 +78,9 @@ try {
   if (process.env.CHAT_COLOR_BACKGROUND) {
     config.chat.colors.background = process.env.CHAT_COLOR_BACKGROUND;
   }
+  if (process.env.SERVER_URL) {
+    config.chat.serverUrl = process.env.SERVER_URL;
+  }
   
   console.log('✅ Configuração carregada (config.json + .env)');
 } catch (error) {
